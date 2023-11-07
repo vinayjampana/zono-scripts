@@ -1,7 +1,7 @@
 import http from "k6/http";
 import { sleep } from "k6";
 import { Counter } from "k6/metrics";
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
+// import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 const apiHost = "https://api-uat.beta.pharmconnect.com";
 let customersData = [];
@@ -13,9 +13,9 @@ export let options = {
 };
 
 export function handleSummary(data) {
-  return {
-    "summary.html": htmlReport(data, { indent: " ", enableColors: true }),
-  };
+  // return {
+  //   "summary.html": htmlReport(data, { indent: " ", enableColors: true }),
+  // };
 }
 
 export const failedRequests = new Counter("failed_requests");
