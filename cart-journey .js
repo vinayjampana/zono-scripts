@@ -135,78 +135,18 @@ function findByTokenAndUpdate(token, newValue, field) {
   });
 }
 
-const getProductsData = (customerId, sellerWorkspaceId) => {
-  return {
-    customerId: customerId,
-    sellerWorkspaceId: sellerWorkspaceId,
-    source: "manual",
-    lines: [
-      { productVariantId: 35582, quantity: 10, operator: "add" },
-      { productVariantId: 34996, quantity: 10, operator: "add" },
-      { productVariantId: 34995, quantity: 10, operator: "add" },
-      { productVariantId: 34507, quantity: 10, operator: "add" },
-      { productVariantId: 34497, quantity: 10, operator: "add" },
-      { productVariantId: 34498, quantity: 10, operator: "add" },
-      { productVariantId: 34486, quantity: 10, operator: "add" },
-      { productVariantId: 34500, quantity: 10, operator: "add" },
-      { productVariantId: 34478, quantity: 10, operator: "add" },
-      { productVariantId: 33720, quantity: 10, operator: "add" },
-      { productVariantId: 33718, quantity: 10, operator: "add" },
-      { productVariantId: 33712, quantity: 10, operator: "add" },
-      { productVariantId: 33711, quantity: 10, operator: "add" },
-      { productVariantId: 33709, quantity: 10, operator: "add" },
-      { productVariantId: 33707, quantity: 10, operator: "add" },
-      { productVariantId: 33704, quantity: 10, operator: "add" },
-      { productVariantId: 33700, quantity: 10, operator: "add" },
-      { productVariantId: 33692, quantity: 10, operator: "add" },
-      { productVariantId: 33688, quantity: 10, operator: "add" },
-      { productVariantId: 33687, quantity: 10, operator: "add" },
-      { productVariantId: 33685, quantity: 10, operator: "add" },
-      { productVariantId: 33683, quantity: 10, operator: "add" },
-      { productVariantId: 33681, quantity: 10, operator: "add" },
-      { productVariantId: 33680, quantity: 10, operator: "add" },
-      { productVariantId: 33679, quantity: 10, operator: "add" },
-      { productVariantId: 33678, quantity: 10, operator: "add" },
-      { productVariantId: 33677, quantity: 10, operator: "add" },
-      { productVariantId: 33676, quantity: 10, operator: "add" },
-      { productVariantId: 33675, quantity: 10, operator: "add" },
-      { productVariantId: 33674, quantity: 10, operator: "add" },
-      { productVariantId: 33671, quantity: 10, operator: "add" },
-      { productVariantId: 33670, quantity: 10, operator: "add" },
-      { productVariantId: 33669, quantity: 10, operator: "add" },
-      { productVariantId: 33665, quantity: 10, operator: "add" },
-      { productVariantId: 33664, quantity: 10, operator: "add" },
-      { productVariantId: 33659, quantity: 10, operator: "add" },
-      { productVariantId: 33655, quantity: 10, operator: "add" },
-      { productVariantId: 33654, quantity: 10, operator: "add" },
-      { productVariantId: 33651, quantity: 10, operator: "add" },
-      { productVariantId: 33650, quantity: 10, operator: "add" },
-    ],
-  };
-};
-
 const performLoadTest = (
   token,
   refreshToken,
   sellerWorkspaceId,
-  customerId
+  customerId,
+  orderPayLoad
 ) => {
-  const addItemToActiveOrderPayload = getProductsData(
-    customerId,
-    sellerWorkspaceId
-  );
-
   const addItemToActiveOrderResponse = makeRequestWithAutoRetry(
     `commerce-v2/orders/additemtoactiveorder/${sellerWorkspaceId}`,
-    addItemToActiveOrderPayload,
+    orderPayLoad,
     findTokenByCustomerId(customerId),
     refreshToken
-  );
-
-  console.log(
-    addItemToActiveOrderResponse.body.errors,
-    customerId,
-    "@@@@@@@@@"
   );
 
   if (
@@ -244,15 +184,36 @@ const findTokenByCustomerId = (customerId) => {
 
 export default function () {
   customersData = [
-    // {
-    //   customerId: "05ea35f1-5438-43ff-a654-c3abb7f91073",
-    //   sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
-    //   token:
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY5NzE3MmIiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTI5NzM5NSwiZXhwIjoxNjk5Mjk4NTk1fQ.W9o0at_IojzXx94lUS6hGgmnKDnqYUdnh8R2_zyzJ9I",
-    //   refreshToken:
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
-    //   number: "6661166666",
-    // },
+    {
+      customerId: "646a6eca-2282-4a72-846a-9b305b71c2a3",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMDkzZWZmNmEtMTM0Yy00ZDFmLWIyNjQtMTVlYTllOTU0YTBmIiwid29ya3NwYWNlSWQiOiJlY2RjYTMxOS1mMDZjLTQzZWYtYjYxMi05YTkwYjU0Njg0MWYiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTQ2MiwiZXhwIjoxNjk5MzMwNjYyfQ.RG7njwTKBKOO1-6dRTLlVQ23NA3GdPQI6KvLXdLqys4",
+      refreshToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+      number: "9606019225",
+      orderPayLoad: {
+        customerId: "646a6eca-2282-4a72-846a-9b305b71c2a3",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31778, quantity: 1 },
+          { productVariantId: 31781, quantity: 10 },
+          { productVariantId: 31783, quantity: 10 },
+          { productVariantId: 31796, quantity: 1 },
+          { productVariantId: 31828, quantity: 25 },
+          { productVariantId: 31838, quantity: 25 },
+          { productVariantId: 31840, quantity: 10 },
+          { productVariantId: 31843, quantity: 10 },
+          { productVariantId: 31845, quantity: 5 },
+          { productVariantId: 31851, quantity: 5 },
+          { productVariantId: 31870, quantity: 10 },
+          { productVariantId: 31871, quantity: 10 },
+          { productVariantId: 31875, quantity: 10 },
+          { productVariantId: 31885, quantity: 10 },
+          { productVariantId: 31886, quantity: 10 },
+        ],
+      },
+    },
     {
       customerId: "ab2eb2bb-9798-4cc7-8440-a16fdf3a7b47",
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
@@ -261,78 +222,327 @@ export default function () {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
       refreshToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2U0MmFkZDQtMzAxOC00ZjIwLWE2NmUtYzUxMjVjZTQyMmYyIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTEwMjcsImV4cCI6MTcyODY0NzAyN30.Zv8ITlZ7XgT3E-XCzncOP1wUFG0U1mBTIYthDw62MtM",
+      orderPayLoad: {
+        customerId: "ab2eb2bb-9798-4cc7-8440-a16fdf3a7b47",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        source: "manual",
+        lines: [
+          { productVariantId: 35582, quantity: 10, operator: "add" },
+          { productVariantId: 34996, quantity: 10, operator: "add" },
+          { productVariantId: 34995, quantity: 10, operator: "add" },
+          { productVariantId: 34507, quantity: 10, operator: "add" },
+          { productVariantId: 34497, quantity: 10, operator: "add" },
+          { productVariantId: 34498, quantity: 10, operator: "add" },
+          { productVariantId: 34486, quantity: 10, operator: "add" },
+          { productVariantId: 34500, quantity: 10, operator: "add" },
+          { productVariantId: 34478, quantity: 10, operator: "add" },
+          { productVariantId: 33720, quantity: 10, operator: "add" },
+          { productVariantId: 33718, quantity: 10, operator: "add" },
+          { productVariantId: 33712, quantity: 10, operator: "add" },
+          { productVariantId: 33711, quantity: 10, operator: "add" },
+          { productVariantId: 33709, quantity: 10, operator: "add" },
+          { productVariantId: 33707, quantity: 10, operator: "add" },
+          { productVariantId: 33704, quantity: 10, operator: "add" },
+          { productVariantId: 33700, quantity: 10, operator: "add" },
+          { productVariantId: 33692, quantity: 10, operator: "add" },
+          { productVariantId: 33688, quantity: 10, operator: "add" },
+          { productVariantId: 33687, quantity: 10, operator: "add" },
+          { productVariantId: 33685, quantity: 10, operator: "add" },
+          { productVariantId: 33683, quantity: 10, operator: "add" },
+          { productVariantId: 33681, quantity: 10, operator: "add" },
+          { productVariantId: 33680, quantity: 10, operator: "add" },
+          { productVariantId: 33679, quantity: 10, operator: "add" },
+          { productVariantId: 33678, quantity: 10, operator: "add" },
+          { productVariantId: 33677, quantity: 10, operator: "add" },
+          { productVariantId: 33676, quantity: 10, operator: "add" },
+          { productVariantId: 33675, quantity: 10, operator: "add" },
+          { productVariantId: 33674, quantity: 10, operator: "add" },
+          { productVariantId: 33671, quantity: 10, operator: "add" },
+          { productVariantId: 33670, quantity: 10, operator: "add" },
+          { productVariantId: 33669, quantity: 10, operator: "add" },
+          { productVariantId: 33665, quantity: 10, operator: "add" },
+          { productVariantId: 33664, quantity: 10, operator: "add" },
+          { productVariantId: 33659, quantity: 10, operator: "add" },
+          { productVariantId: 33655, quantity: 10, operator: "add" },
+          { productVariantId: 33654, quantity: 10, operator: "add" },
+          { productVariantId: 33651, quantity: 10, operator: "add" },
+          { productVariantId: 33650, quantity: 10, operator: "add" },
+        ],
+      },
     },
     {
-      customerId: "b35c50f7-9509-4fb0-88fd-d2e08055eb2e",
+      customerId: "0938ed8d-09e0-42f3-af27-126d743b4e2b",
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
-      number: "9898989822",
+      number: "9898989833",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiJiYjdkYTcyMi0zN2NiLTRlNmUtYTA3Yy0wZWZiYjRjNzVjYTgiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTM2NSwiZXhwIjoxNjk5MzMwNTY1fQ.bnxBVBHuECxor-SeabV6QxKvyP3VZX91LQXvYBiZ2rA",
       refreshToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTA0ZjI0MjYtNjE5Zi00NzJmLWE0YWItODBkNzJiZWMyN2NmIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MzcsImV4cCI6MTcyODU3NDYzN30.f6nuqv1ycdIkYF8W_ChK7pUQz90DUUzC4jGHI-oWcnY",
-    },
-    {
-      customerId: "2e5e59bf-2a77-4e6b-8e4e-10ea25d72e8d",
-      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
-      number: "9211420420",
-      token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
-      refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTAwMzAsImV4cCI6MTcyODY0NjAzMH0.vL0fsLgTxeLra_k7vTtCiZEmZPh4DR3W9y8z0wYBVJc",
+      orderPayLoad: {
+        customerId: "0938ed8d-09e0-42f3-af27-126d743b4e2b",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31618, quantity: 5 },
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31620, quantity: 1 },
+          { productVariantId: 31621, quantity: 10 },
+          { productVariantId: 31622, quantity: 5 },
+          { productVariantId: 31623, quantity: 1 },
+          { productVariantId: 31624, quantity: 1 },
+          { productVariantId: 31625, quantity: 10 },
+          { productVariantId: 31626, quantity: 10 },
+          { productVariantId: 31627, quantity: 30 },
+          { productVariantId: 31628, quantity: 1 },
+          { productVariantId: 31629, quantity: 1 },
+          { productVariantId: 31630, quantity: 1 },
+          { productVariantId: 31631, quantity: 1 },
+          { productVariantId: 31632, quantity: 1 },
+          { productVariantId: 31633, quantity: 10 },
+          { productVariantId: 31634, quantity: 1 },
+          { productVariantId: 31636, quantity: 5 },
+          { productVariantId: 31637, quantity: 10 },
+        ],
+      },
     },
     {
       customerId: "991a4e99-bd76-4d24-9f04-8a0c2e74a26c",
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "9898989811",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzcxODljZTctNDIwYS00NWJhLTkwMTgtNmZmZjU2OTU5NWJkIiwid29ya3NwYWNlSWQiOiJkYTQyMzdmMC1hZmQ2LTQ0NDktOTU5MS03MDg0MGQyMTE2MWYiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTMxOSwiZXhwIjoxNjk5MzMwNTE5fQ.EQmNsAFsAkE9bPFPPSBQI8YFZfapMryntpIapGz-S6I",
+      refreshToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTAwMzAsImV4cCI6MTcyODY0NjAzMH0.vL0fsLgTxeLra_k7vTtCiZEmZPh4DR3W9y8z0wYBVJc",
+      orderPayLoad: {
+        customerId: "991a4e99-bd76-4d24-9f04-8a0c2e74a26c",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31604, quantity: 10 },
+          { productVariantId: 31618, quantity: 5 },
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31620, quantity: 1 },
+          { productVariantId: 31621, quantity: 10 },
+          { productVariantId: 31622, quantity: 5 },
+          { productVariantId: 31623, quantity: 1 },
+          { productVariantId: 31624, quantity: 1 },
+          { productVariantId: 31625, quantity: 10 },
+          { productVariantId: 31626, quantity: 10 },
+          { productVariantId: 31627, quantity: 30 },
+          { productVariantId: 31628, quantity: 1 },
+          { productVariantId: 31629, quantity: 1 },
+          { productVariantId: 31630, quantity: 1 },
+          { productVariantId: 31631, quantity: 1 },
+          { productVariantId: 31632, quantity: 1 },
+          { productVariantId: 31633, quantity: 10 },
+          { productVariantId: 31634, quantity: 1 },
+          { productVariantId: 31636, quantity: 5 },
+          { productVariantId: 31637, quantity: 10 },
+        ],
+      },
+    },
+
+    {
+      customerId: "b35c50f7-9509-4fb0-88fd-d2e08055eb2e",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+      number: "9898989822",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTA0ZjI0MjYtNjE5Zi00NzJmLWE0YWItODBkNzJiZWMyN2NmIiwid29ya3NwYWNlSWQiOiI0MzQ5MzRkYi04YmE1LTQ3MDItOTIxZS1iNWM4YjVmZTUyYzMiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTI1OCwiZXhwIjoxNjk5MzMwNDU4fQ.GqAY0Vosn4GpKF1lLh1B9NhF--TqMsnDDax_hTR9MtI",
       refreshToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzcxODljZTctNDIwYS00NWJhLTkwMTgtNmZmZjU2OTU5NWJkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg1NTAsImV4cCI6MTcyODU3NDU1MH0.0R_uJOqtfKMluLatYS0Tni3zNah_ZVvaPv6SwtZCQMg",
-    },
-    {
-      customerId: "42c6f42c-2fbc-4122-b7be-f6ebe2aba27e",
-      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f797",
-      number: "4443212344",
-      token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
-      refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZDE2NTZlM2QtODk3NC00MDc4LTkwYjctYzM3OWNjMzRjOTlkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTE0NTAsImV4cCI6MTcyODY0NzQ1MH0.z8PMgx5AftktbaR_2LVHP8Vfvcs_Nao7u2M5sAV8N_c",
-    },
-    {
-      customerId: "0938ed8d-09e0-42f3-af27-126d743b4e2b",
-      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f798",
-      number: "9898989833",
-      token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
-      refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MjQsImV4cCI6MTcyODU3NDYyNH0.CF09NLKqk4NLtBUF4i7aRY_JMAGMxNigUVyOfU6V8eo",
+      orderPayLoad: {
+        customerId: "b35c50f7-9509-4fb0-88fd-d2e08055eb2e",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31776, quantity: 10 },
+          { productVariantId: 31777, quantity: 4 },
+          { productVariantId: 31778, quantity: 1 },
+          { productVariantId: 31779, quantity: 2 },
+          { productVariantId: 31780, quantity: 10 },
+          { productVariantId: 31781, quantity: 10 },
+          { productVariantId: 31782, quantity: 10 },
+          { productVariantId: 31783, quantity: 10 },
+          { productVariantId: 31784, quantity: 2 },
+          { productVariantId: 31785, quantity: 2 },
+          { productVariantId: 31786, quantity: 2 },
+          { productVariantId: 31787, quantity: 2 },
+          { productVariantId: 31788, quantity: 2 },
+          { productVariantId: 31789, quantity: 2 },
+          { productVariantId: 31790, quantity: 2 },
+          { productVariantId: 31791, quantity: 1 },
+          { productVariantId: 31792, quantity: 1 },
+          { productVariantId: 31793, quantity: 1 },
+          { productVariantId: 31794, quantity: 10 },
+        ],
+      },
     },
     {
       customerId: "220d149b-7bba-4a29-a856-5eb0f42c01b2",
-      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f799",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f797",
       number: "3331113331",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiODdlYTVlZDYtNmQ1ZS00NzMwLWFmNjYtZTcwYmNkM2E0NGQ1Iiwid29ya3NwYWNlSWQiOiI1NzI0NzAxOC1kZDJjLTQ4NWQtOTA0Ny1jNjY0ZGUyZmRmYTMiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTE3MCwiZXhwIjoxNjk5MzMwMzcwfQ.7ygx0eSCL1D-xUweRLkmqBV0Wbff1MHFkNbN5zRr-s0",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiODdlYTVlZDYtNmQ1ZS00NzMwLWFmNjYtZTcwYmNkM2E0NGQ1Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTEzMDEsImV4cCI6MTcyODY0NzMwMX0.ne4eW9TIchHBgXQfKFLGoKNMocF74Yvm9OoVUitqIHA",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZDE2NTZlM2QtODk3NC00MDc4LTkwYjctYzM3OWNjMzRjOTlkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTE0NTAsImV4cCI6MTcyODY0NzQ1MH0.z8PMgx5AftktbaR_2LVHP8Vfvcs_Nao7u2M5sAV8N_c",
+      orderPayLoad: {
+        customerId: "220d149b-7bba-4a29-a856-5eb0f42c01b2",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31604, quantity: 10 },
+          { productVariantId: 31618, quantity: 5 },
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31621, quantity: 10 },
+        ],
+      },
+    },
+    {
+      customerId: "05ea35f1-5438-43ff-a654-c3abb7f91073",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f798",
+      number: "6661166666",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY5NzE3MmIiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTEwOCwiZXhwIjoxNjk5MzMwMzA4fQ.Y_FC4nqbVbm24UZsHqIYs2SBrTnPDTuDiSlMKUHdjk4",
+      refreshToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MjQsImV4cCI6MTcyODU3NDYyNH0.CF09NLKqk4NLtBUF4i7aRY_JMAGMxNigUVyOfU6V8eo",
+      orderPayLoad: {
+        customerId: "05ea35f1-5438-43ff-a654-c3abb7f91073",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31778, quantity: 1 },
+          { productVariantId: 31781, quantity: 10 },
+          { productVariantId: 31821, quantity: 6 },
+          { productVariantId: 31829, quantity: 20 },
+          { productVariantId: 31835, quantity: 10 },
+          { productVariantId: 31838, quantity: 25 },
+          { productVariantId: 31839, quantity: 4 },
+          { productVariantId: 31840, quantity: 10 },
+          { productVariantId: 31858, quantity: 10 },
+          { productVariantId: 31859, quantity: 12 },
+          { productVariantId: 31870, quantity: 10 },
+          { productVariantId: 31871, quantity: 10 },
+          { productVariantId: 31875, quantity: 10 },
+          { productVariantId: 31885, quantity: 10 },
+          { productVariantId: 31886, quantity: 10 },
+          { productVariantId: 31902, quantity: 30 },
+          { productVariantId: 31903, quantity: 30 },
+          { productVariantId: 31904, quantity: 30 },
+          { productVariantId: 31905, quantity: 1 },
+          { productVariantId: 31908, quantity: 30 },
+        ],
+      },
+    },
+    {
+      customerId: "ab2eb2bb-9798-4cc7-8440-a16fdf3a7b47",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+      number: "4242433333",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2U0MmFkZDQtMzAxOC00ZjIwLWE2NmUtYzUxMjVjZTQyMmYyIiwid29ya3NwYWNlSWQiOiJiMzdhYzRjMy0yMzAzLTRjY2MtODRhNS1kMzNiNzAxZjQ2ZDkiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTA2MywiZXhwIjoxNjk5MzMwMjYzfQ.7jUCiGgYpNhOCY7f63IF83GAwvO3SBnKortBcT4tAeQ",
+      refreshToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTA5MzEsImV4cCI6MTcyODY0NjkzMX0.hPs7XoQJjbeEaLUSJjHCKRln7eq3MMVlDER5m_JnG2M",
+      orderPayLoad: {
+        customerId: "ab2eb2bb-9798-4cc7-8440-a16fdf3a7b47",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31604, quantity: 10 },
+          { productVariantId: 31618, quantity: 5 },
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31620, quantity: 1 },
+          { productVariantId: 31621, quantity: 10 },
+          { productVariantId: 31622, quantity: 5 },
+          { productVariantId: 31623, quantity: 1 },
+          { productVariantId: 31624, quantity: 1 },
+          { productVariantId: 31625, quantity: 10 },
+          { productVariantId: 31626, quantity: 10 },
+          { productVariantId: 31627, quantity: 30 },
+          { productVariantId: 31628, quantity: 1 },
+          { productVariantId: 31629, quantity: 1 },
+          { productVariantId: 31630, quantity: 1 },
+          { productVariantId: 31631, quantity: 1 },
+          { productVariantId: 31632, quantity: 1 },
+          { productVariantId: 31633, quantity: 10 },
+          { productVariantId: 31634, quantity: 1 },
+          { productVariantId: 31636, quantity: 5 },
+          { productVariantId: 31637, quantity: 10 },
+        ],
+      },
     },
     {
       customerId: "fd7373b1-3011-42b8-a6f8-7ab77699f265",
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "3131313131",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiJmMjQ1YzEyZi03ZmM3LTQ2ZDMtODYzNS00ODFlYmUwYmE1MmQiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTAxNCwiZXhwIjoxNjk5MzMwMjE0fQ.0uNTQnVtDrXJNnzxOARLolkQfcbDQfThW-cWmFkFdKE",
       refreshToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTA5MzEsImV4cCI6MTcyODY0NjkzMX0.hPs7XoQJjbeEaLUSJjHCKRln7eq3MMVlDER5m_JnG2M",
+      orderPayLoad: {
+        customerId: "fd7373b1-3011-42b8-a6f8-7ab77699f265",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31604, quantity: 10 },
+          { productVariantId: 31618, quantity: 5 },
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31621, quantity: 10 },
+          { productVariantId: 31622, quantity: 5 },
+          { productVariantId: 31623, quantity: 1 },
+          { productVariantId: 31624, quantity: 1 },
+          { productVariantId: 31625, quantity: 10 },
+          { productVariantId: 31626, quantity: 10 },
+          { productVariantId: 31627, quantity: 30 },
+          { productVariantId: 31628, quantity: 1 },
+          { productVariantId: 31633, quantity: 10 },
+          { productVariantId: 31636, quantity: 5 },
+          { productVariantId: 31637, quantity: 10 },
+          { productVariantId: 31638, quantity: 30 },
+          { productVariantId: 31640, quantity: 10 },
+          { productVariantId: 31641, quantity: 1 },
+          { productVariantId: 31642, quantity: 1 },
+          { productVariantId: 31643, quantity: 5 },
+          { productVariantId: 31644, quantity: 1 },
+        ],
+      },
+    },
+    {
+      customerId: "2e5e59bf-2a77-4e6b-8e4e-10ea25d72e8d",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+      number: "9211420420",
+      token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiJlOTEyODYwNi02MTg4LTRlM2EtODVhZi1kYjdkYzNmN2FhM2IiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyODkxNSwiZXhwIjoxNjk5MzMwMTE1fQ.qxmdI9YYbUnAmDd0EJiEd4a6qQ4notF1JCk4glDD0pI",
+      refreshToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTA5MzEsImV4cCI6MTcyODY0NjkzMX0.hPs7XoQJjbeEaLUSJjHCKRln7eq3MMVlDER5m_JnG2M",
+      orderPayLoad: {
+        customerId: "2e5e59bf-2a77-4e6b-8e4e-10ea25d72e8d",
+        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        lines: [
+          { productVariantId: 31604, quantity: 10 },
+          { productVariantId: 31618, quantity: 5 },
+          { productVariantId: 31619, quantity: 1 },
+          { productVariantId: 31620, quantity: 1 },
+          { productVariantId: 31621, quantity: 10 },
+          { productVariantId: 31622, quantity: 5 },
+          { productVariantId: 31623, quantity: 1 },
+          { productVariantId: 31624, quantity: 1 },
+          { productVariantId: 31625, quantity: 10 },
+          { productVariantId: 31626, quantity: 10 },
+          { productVariantId: 31627, quantity: 30 },
+          { productVariantId: 31628, quantity: 1 },
+          { productVariantId: 31629, quantity: 1 },
+          { productVariantId: 31630, quantity: 1 },
+          { productVariantId: 31631, quantity: 1 },
+          { productVariantId: 31632, quantity: 1 },
+          { productVariantId: 31633, quantity: 10 },
+          { productVariantId: 31634, quantity: 1 },
+          { productVariantId: 31636, quantity: 5 },
+          { productVariantId: 31637, quantity: 10 },
+        ],
+      },
     },
   ];
-  const index = __VU;
+  const index = __VU - 1;
 
   performLoadTest(
     customersData[index].token,
     customersData[index].refreshToken,
     customersData[index].sellerWorkspaceId,
-    customersData[index].customerId
+    customersData[index].customerId,
+    customersData[index].orderPayLoad
   );
   sleep(1);
 }
