@@ -1,21 +1,21 @@
 import http from "k6/http";
 import { sleep } from "k6";
 import { Counter } from "k6/metrics";
-// import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 const apiHost = "https://api-uat.beta.pharmconnect.com";
 let customersData = [];
 
 export let options = {
-  vus: 1,
-  duration: "1s",
-  maxDuration: "60s",
+  vus: 10,
+  iterations: 100,
+  duration: "10m",
 };
 
 export function handleSummary(data) {
-  // return {
-  //   "summary.html": htmlReport(data, { indent: " ", enableColors: true }),
-  // };
+  return {
+    "summary.html": htmlReport(data, { indent: " ", enableColors: true }),
+  };
 }
 
 export const failedRequests = new Counter("failed_requests");
@@ -149,6 +149,13 @@ const performLoadTest = (
     refreshToken
   );
 
+  sleep(10);
+
+  console.error(
+    addItemToActiveOrderResponse.status,
+    addItemToActiveOrderResponse.body
+  );
+
   if (
     addItemToActiveOrderResponse.status >= 200 &&
     addItemToActiveOrderResponse.status < 400
@@ -164,6 +171,9 @@ const performLoadTest = (
       const manualFileId = JSON.parse(poFileResponse.body).files.find(
         (item) => item.importSource === "manual"
       ).id;
+
+      sleep(10);
+
       const checkoutResponse = makeRequestWithAutoRetry(
         `commerce-v2/orders/checkout/${sellerWorkspaceId}`,
         {
@@ -188,9 +198,9 @@ export default function () {
       customerId: "646a6eca-2282-4a72-846a-9b305b71c2a3",
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMDkzZWZmNmEtMTM0Yy00ZDFmLWIyNjQtMTVlYTllOTU0YTBmIiwid29ya3NwYWNlSWQiOiJlY2RjYTMxOS1mMDZjLTQzZWYtYjYxMi05YTkwYjU0Njg0MWYiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTQ2MiwiZXhwIjoxNjk5MzMwNjYyfQ.RG7njwTKBKOO1-6dRTLlVQ23NA3GdPQI6KvLXdLqys4",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMDkzZWZmNmEtMTM0Yy00ZDFmLWIyNjQtMTVlYTllOTU0YTBmIiwid29ya3NwYWNlSWQiOiJlY2RjYTMxOS1mMDZjLTQzZWYtYjYxMi05YTkwYjU0Njg0MWYiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzOTMzMCwiZXhwIjoxNjk5MzQwNTMwfQ.Zza26VTeny4lCHmBx4aV24QpGBA3bQgNjVkULS7BydE",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMDkzZWZmNmEtMTM0Yy00ZDFmLWIyNjQtMTVlYTllOTU0YTBmIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTY0MDU0OTIsImV4cCI6MTcyNzk0MTQ5Mn0.Xx6Nlb87b9Z4tgk8LWkzaTCaeES74twg8-OdsvQWjYo",
       number: "9606019225",
       orderPayLoad: {
         customerId: "646a6eca-2282-4a72-846a-9b305b71c2a3",
@@ -219,7 +229,7 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "4242433333",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2vyIjp7ImlkIjoiYTY5MzRhN2MtYzE4ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYAWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY9W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2U0MmFkZDQtMzAxOC00ZjIwLWE2NmUtYzUxMjVjZTQyMmYyIiwid29ya3NwYWNlSWQiOiJiMzdhYzRjMy0yMzAzLTRjY2MtODRhNS1kMzNiNzAxZjQ2ZDkiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzNzk5NSwiZXhwIjoxNjk5MzM5MTk1fQ.TbETlnaizlRNkg6KRwInCiVqTRSZZPwUSwqr12N21Yk",
       refreshToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiY2U0MmFkZDQtMzAxOC00ZjIwLWE2NmUtYzUxMjVjZTQyMmYyIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTEwMjcsImV4cCI6MTcyODY0NzAyN30.Zv8ITlZ7XgT3E-XCzncOP1wUFG0U1mBTIYthDw62MtM",
       orderPayLoad: {
@@ -275,9 +285,9 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "9898989833",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiJiYjdkYTcyMi0zN2NiLTRlNmUtYTA3Yy0wZWZiYjRjNzVjYTgiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTM2NSwiZXhwIjoxNjk5MzMwNTY1fQ.bnxBVBHuECxor-SeabV6QxKvyP3VZX91LQXvYBiZ2rA",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiJiYjdkYTcyMi0zN2NiLTRlNmUtYTA3Yy0wZWZiYjRjNzVjYTgiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzOTI1MCwiZXhwIjoxNjk5MzQwNDUwfQ.Y_6d_CdbzEPTEbI0zBlwI_Cm1IMOc1gVSg2JXZM7fbU",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTA0ZjI0MjYtNjE5Zi00NzJmLWE0YWItODBkNzJiZWMyN2NmIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MzcsImV4cCI6MTcyODU3NDYzN30.f6nuqv1ycdIkYF8W_ChK7pUQz90DUUzC4jGHI-oWcnY",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MjQsImV4cCI6MTcyODU3NDYyNH0.CF09NLKqk4NLtBUF4i7aRY_JMAGMxNigUVyOfU6V8eo",
       orderPayLoad: {
         customerId: "0938ed8d-09e0-42f3-af27-126d743b4e2b",
         sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
@@ -309,9 +319,9 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "9898989811",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzcxODljZTctNDIwYS00NWJhLTkwMTgtNmZmZjU2OTU5NWJkIiwid29ya3NwYWNlSWQiOiJkYTQyMzdmMC1hZmQ2LTQ0NDktOTU5MS03MDg0MGQyMTE2MWYiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTMxOSwiZXhwIjoxNjk5MzMwNTE5fQ.EQmNsAFsAkE9bPFPPSBQI8YFZfapMryntpIapGz-S6I",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzcxODljZTctNDIwYS00NWJhLTkwMTgtNmZmZjU2OTU5NWJkIiwid29ya3NwYWNlSWQiOiJkYTQyMzdmMC1hZmQ2LTQ0NDktOTU5MS03MDg0MGQyMTE2MWYiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzODY0MSwiZXhwIjoxNjk5MzM5ODQxfQ.aREOEnbocD5t0W_Q7NobyeeKMHochGB6yyiKFjJqNfQ",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTAwMzAsImV4cCI6MTcyODY0NjAzMH0.vL0fsLgTxeLra_k7vTtCiZEmZPh4DR3W9y8z0wYBVJc",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzcxODljZTctNDIwYS00NWJhLTkwMTgtNmZmZjU2OTU5NWJkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg1NTAsImV4cCI6MTcyODU3NDU1MH0.0R_uJOqtfKMluLatYS0Tni3zNah_ZVvaPv6SwtZCQMg",
       orderPayLoad: {
         customerId: "991a4e99-bd76-4d24-9f04-8a0c2e74a26c",
         sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
@@ -345,9 +355,9 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "9898989822",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTA0ZjI0MjYtNjE5Zi00NzJmLWE0YWItODBkNzJiZWMyN2NmIiwid29ya3NwYWNlSWQiOiI0MzQ5MzRkYi04YmE1LTQ3MDItOTIxZS1iNWM4YjVmZTUyYzMiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTI1OCwiZXhwIjoxNjk5MzMwNDU4fQ.GqAY0Vosn4GpKF1lLh1B9NhF--TqMsnDDax_hTR9MtI",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTA0ZjI0MjYtNjE5Zi00NzJmLWE0YWItODBkNzJiZWMyN2NmIiwid29ya3NwYWNlSWQiOiI0MzQ5MzRkYi04YmE1LTQ3MDItOTIxZS1iNWM4YjVmZTUyYzMiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzOTA4OSwiZXhwIjoxNjk5MzQwMjg5fQ.lPAAQ_FgbNd6x3lKebrse0iHd9usWqe6jEmjnZ6mS_M",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYzcxODljZTctNDIwYS00NWJhLTkwMTgtNmZmZjU2OTU5NWJkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg1NTAsImV4cCI6MTcyODU3NDU1MH0.0R_uJOqtfKMluLatYS0Tni3zNah_ZVvaPv6SwtZCQMg",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTA0ZjI0MjYtNjE5Zi00NzJmLWE0YWItODBkNzJiZWMyN2NmIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MzcsImV4cCI6MTcyODU3NDYzN30.f6nuqv1ycdIkYF8W_ChK7pUQz90DUUzC4jGHI-oWcnY",
       orderPayLoad: {
         customerId: "b35c50f7-9509-4fb0-88fd-d2e08055eb2e",
         sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
@@ -377,12 +387,12 @@ export default function () {
     },
     {
       customerId: "220d149b-7bba-4a29-a856-5eb0f42c01b2",
-      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f797",
+      sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "3331113331",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiODdlYTVlZDYtNmQ1ZS00NzMwLWFmNjYtZTcwYmNkM2E0NGQ1Iiwid29ya3NwYWNlSWQiOiI1NzI0NzAxOC1kZDJjLTQ4NWQtOTA0Ny1jNjY0ZGUyZmRmYTMiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTE3MCwiZXhwIjoxNjk5MzMwMzcwfQ.7ygx0eSCL1D-xUweRLkmqBV0Wbff1MHFkNbN5zRr-s0",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiODdlYTVlZDYtNmQ1ZS00NzMwLWFmNjYtZTcwYmNkM2E0NGQ1Iiwid29ya3NwYWNlSWQiOiI1NzI0NzAxOC1kZDJjLTQ4NWQtOTA0Ny1jNjY0ZGUyZmRmYTMiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzODAwMSwiZXhwIjoxNjk5MzM5MjAxfQ.RLFurnHmASbnIDlEZWu6wwqLOvF2IvNaCn0F9ghFpeU",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZDE2NTZlM2QtODk3NC00MDc4LTkwYjctYzM3OWNjMzRjOTlkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTE0NTAsImV4cCI6MTcyODY0NzQ1MH0.z8PMgx5AftktbaR_2LVHP8Vfvcs_Nao7u2M5sAV8N_c",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiODdlYTVlZDYtNmQ1ZS00NzMwLWFmNjYtZTcwYmNkM2E0NGQ1Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTEzMDEsImV4cCI6MTcyODY0NzMwMX0.ne4eW9TIchHBgXQfKFLGoKNMocF74Yvm9OoVUitqIHA",
       orderPayLoad: {
         customerId: "220d149b-7bba-4a29-a856-5eb0f42c01b2",
         sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
@@ -399,12 +409,12 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f798",
       number: "6661166666",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY5NzE3MmIiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTEwOCwiZXhwIjoxNjk5MzMwMzA4fQ.Y_FC4nqbVbm24UZsHqIYs2SBrTnPDTuDiSlMKUHdjk4",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiI4MWI0MzM3OS1iZGZjLTQ2YTktOGNiZC1iMDgwYjY5NzE3MmIiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzODgzMywiZXhwIjoxNjk5MzQwMDMzfQ.D3VwzDs5pXhDvftu6Qfq3UR_HL-YXMAU6hxcLeA6tHI",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTdjODU3MTYtNjYyNi00NDllLWJiNTItMzBhNjFjZTQ3NmFkIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcwMzg2MjQsImV4cCI6MTcyODU3NDYyNH0.CF09NLKqk4NLtBUF4i7aRY_JMAGMxNigUVyOfU6V8eo",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYTY5MzRhN2MtYzE0ZC00NzBlLTk3NGQtYzliZmZjOGJlMzM0Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTExNzYsImV4cCI6MTcyODY0NzE3Nn0.JsEG2h6EKj3G1vjwk-nK2tqJLCBhvnwkUmPcEPtJsfw",
       orderPayLoad: {
         customerId: "05ea35f1-5438-43ff-a654-c3abb7f91073",
-        sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
+        sellerWorkspaceId: "",
         lines: [
           { productVariantId: 31778, quantity: 1 },
           { productVariantId: 31781, quantity: 10 },
@@ -469,7 +479,7 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "3131313131",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiJmMjQ1YzEyZi03ZmM3LTQ2ZDMtODYzNS00ODFlYmUwYmE1MmQiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyOTAxNCwiZXhwIjoxNjk5MzMwMjE0fQ.0uNTQnVtDrXJNnzxOARLolkQfcbDQfThW-cWmFkFdKE",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiJmMjQ1YzEyZi03ZmM3LTQ2ZDMtODYzNS00ODFlYmUwYmE1MmQiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzNzU3OSwiZXhwIjoxNjk5MzM4Nzc5fQ.-oozvFxkbAeRnuOx1jBDHrAw9p3DJYZLj3x1bZ1E5Ss",
       refreshToken:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTA5MzEsImV4cCI6MTcyODY0NjkzMX0.hPs7XoQJjbeEaLUSJjHCKRln7eq3MMVlDER5m_JnG2M",
       orderPayLoad: {
@@ -504,9 +514,9 @@ export default function () {
       sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
       number: "9211420420",
       token:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiJlOTEyODYwNi02MTg4LTRlM2EtODVhZi1kYjdkYzNmN2FhM2IiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMyODkxNSwiZXhwIjoxNjk5MzMwMTE1fQ.qxmdI9YYbUnAmDd0EJiEd4a6qQ4notF1JCk4glDD0pI",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiJlOTEyODYwNi02MTg4LTRlM2EtODVhZi1kYjdkYzNmN2FhM2IiLCJ3b3Jrc3BhY2VSb2xlcyI6WyJhZG0iXX0sImlhdCI6MTY5OTMzNzU3NSwiZXhwIjoxNjk5MzM4Nzc1fQ.2lbCqXedta6--ui6i1wA-TKkSHHWXbUoLX_Jdxunm2I",
       refreshToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiYmE3NmY2N2YtMjIxOS00NmNmLWJmZmEtYmMzZTNhYTMwMDgxIiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTA5MzEsImV4cCI6MTcyODY0NjkzMX0.hPs7XoQJjbeEaLUSJjHCKRln7eq3MMVlDER5m_JnG2M",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiZTM1MTQxYmEtZjc3Ni00MWVjLTg1NjgtNDJiMjlmOTdjYzA3Iiwid29ya3NwYWNlSWQiOiIiLCJ3b3Jrc3BhY2VSb2xlcyI6W119LCJpYXQiOjE2OTcxMTAwMzAsImV4cCI6MTcyODY0NjAzMH0.vL0fsLgTxeLra_k7vTtCiZEmZPh4DR3W9y8z0wYBVJc",
       orderPayLoad: {
         customerId: "2e5e59bf-2a77-4e6b-8e4e-10ea25d72e8d",
         sellerWorkspaceId: "8ef5d569-3419-44e5-bb33-3ecfd260f796",
@@ -544,5 +554,5 @@ export default function () {
     customersData[index].customerId,
     customersData[index].orderPayLoad
   );
-  sleep(1);
+  sleep(10);
 }
